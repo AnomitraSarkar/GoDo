@@ -15,10 +15,10 @@ func StartApp(dir string) {
 	app = tview.NewApplication()
 
 	fileListView = tview.NewList()
-	fileListView.SetTitle("Todo Files (n:new d:del o:open)").SetBorder(true)
+	fileListView.SetTitle(" Todo Files (n:new d:del o:open) ").SetBorder(true)
 
 	todoListView = tview.NewList()
-	todoListView.SetTitle("Todos (a:add d:del t:toggle b:back)").SetBorder(true)
+	todoListView.SetTitle(" Todos (a:add d:del t:toggle b:back) ").SetBorder(true)
 
 	refreshFileList(dir)
 

@@ -1,0 +1,62 @@
+[
+  {
+    "text": "quit option",
+    "done": false
+  },
+  {
+    "text": "edit option",
+    "done": false
+  },
+  {
+    "text": "in cli option updation for both",
+    "done": false
+  },
+  {
+    "text": "config files",
+    "done": false
+  },
+  {
+    "text": "nerd font compatiblity",
+    "done": false
+  },
+  {
+    "text": "locally-encrypted",
+    "done": false
+  },
+  {
+    "text": "password protection",
+    "done": false
+  },
+  {
+    "text": "multi check system not only tick and wrong",
+    "done": false
+  },
+  {
+    "text": "priority movement",
+    "done": false
+  },
+  {
+    "text": "possible null empty string bugs",
+    "done": false
+  },
+  {
+    "text": "vim motions",
+    "done": false
+  },
+  {
+    "text": "multi system compilation and releases",
+    "done": false
+  },
+  {
+    "text": "open-source the project",
+    "done": false
+  },
+  {
+    "text": "profiling",
+    "done": false
+  },
+  {
+    "text": "manual",
+    "done": false
+  }
+]
