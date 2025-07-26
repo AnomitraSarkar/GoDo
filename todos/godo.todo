@@ -1,13 +1,5 @@
 [
   {
-    "text": "quit option",
-    "done": true
-  },
-  {
-    "text": "edit option form ",
-    "done": false
-  },
-  {
     "text": "in cli option updation for both",
     "done": false
   },
@@ -66,5 +58,13 @@
   {
     "text": "remove done options both local level and global level",
     "done": false
+  }
+  {
+    "text": "quit option",
+    "done": true
+  },
+  {
+    "text": "edit option form ",
+    "done": true
   }
 ]
