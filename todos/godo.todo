@@ -1,10 +1,10 @@
 [
   {
     "text": "quit option",
-    "done": false
+    "done": true
   },
   {
-    "text": "edit option",
+    "text": "edit option form ",
     "done": false
   },
   {
@@ -61,6 +61,10 @@
   },
   {
     "text": "manual",
+    "done": false
+  },
+  {
+    "text": "remove done options both local level and global level",
     "done": false
   }
 ]

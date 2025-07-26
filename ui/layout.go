@@ -9,16 +9,18 @@ import (
 var app *tview.Application
 var todoListView *tview.List
 var fileListView *tview.List
+var pages *tview.Pages
 var currentFile string
 
 func StartApp(dir string) {
 	app = tview.NewApplication()
+	pages = tview.NewPages()
 
 	fileListView = tview.NewList()
-	fileListView.SetTitle(" Todo Files (n:new d:del o:open) ").SetBorder(true)
+	fileListView.SetTitle(" Todo Files (n:new e:edit d:del o:open q:quit) ").SetBorder(true)
 
 	todoListView = tview.NewList()
-	todoListView.SetTitle(" Todos (a:add d:del t:toggle b:back) ").SetBorder(true)
+	todoListView.SetTitle(" Todos (a:add e:edit d:del t:toggle b:back q:quit) ").SetBorder(true)
 
 	refreshFileList(dir)
 
@@ -32,7 +34,8 @@ func StartApp(dir string) {
 		AddItem(fileListView, 30, 1, true).
 		AddItem(todoListView, 0, 2, false)
 
-	app.SetRoot(flex, true).SetFocus(fileListView)
+	pages.AddPage("main", flex, true, true)
+	app.SetRoot(pages, true).SetFocus(fileListView)
 
 	registerKeybindings(dir)
 
