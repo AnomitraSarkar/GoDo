@@ -113,7 +113,29 @@ func registerKeybindings(dir string) {
 				}
 			})
 
+		case 'N': // Create new file
+			showInputDialog("New File", "File name (without .todo):", "", func(name string) {
+				if name != "" {
+					name = strings.TrimSuffix(name, ".todo")
+					path := filepath.Join(dir, name+".todo")
+					_ = storage.SaveTodos(path, []models.Todo{})
+					refreshFileList(dir)
+				}
+			})
+
 		case 'd': // Delete selected file
+			index := fileListView.GetCurrentItem()
+			if index >= 0 && index < fileListView.GetItemCount() {
+				name, _ := fileListView.GetItemText(index)
+				_ = os.Remove(filepath.Join(dir, name))
+				if currentFile == filepath.Join(dir, name) {
+					currentFile = ""
+					todoListView.Clear()
+				}
+				refreshFileList(dir)
+			}
+
+		case 'D': // Delete selected file
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				name, _ := fileListView.GetItemText(index)
@@ -134,6 +156,15 @@ func registerKeybindings(dir string) {
 				app.SetFocus(todoListView)
 			}
 			
+		case 'O': // Open selected file
+			index := fileListView.GetCurrentItem()
+			if index >= 0 && index < fileListView.GetItemCount() {
+				name, _ := fileListView.GetItemText(index)
+				currentFile = filepath.Join(dir, name)
+				refreshTodoList()
+				app.SetFocus(todoListView)
+			}
+
 		case 'e': // Edit file name
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
@@ -153,7 +184,27 @@ func registerKeybindings(dir string) {
 				})
 			}
 			
+		case 'E': // Edit file name
+			index := fileListView.GetCurrentItem()
+			if index >= 0 && index < fileListView.GetItemCount() {
+				oldName, _ := fileListView.GetItemText(index)
+				oldName = strings.TrimSuffix(oldName, ".todo")
+				showInputDialog("Edit File", "New name:", oldName, func(newName string) {
+					if newName != "" {
+						newName = strings.TrimSuffix(newName, ".todo")
+						newPath := filepath.Join(dir, newName+".todo")
+						oldPath := filepath.Join(dir, oldName+".todo")
+						_ = os.Rename(oldPath, newPath)
+						if currentFile == oldPath {
+							currentFile = newPath
+						}
+						refreshFileList(dir)
+					}
+				})
+			}
 		case 'q': // Quit application
+			app.Stop()
+		case 'Q': // Quit application
 			app.Stop()
 		}
 		return event
@@ -172,6 +223,28 @@ func registerKeybindings(dir string) {
 			})
 
 		case 'd': // Delete selected todo
+			index := todoListView.GetCurrentItem()
+			todos, err := storage.LoadTodos(currentFile)
+			if err != nil {
+				return event
+			}
+			if index >= 0 && index < len(todos) {
+				todos = append(todos[:index], todos[index+1:]...)
+				_ = storage.SaveTodos(currentFile, todos)
+			}
+			refreshTodoList()
+
+		case 'A': // Add new todo
+			showInputDialog("New Todo", "Enter todo text:", "", func(text string) {
+				if text != "" {
+					todos, _ := storage.LoadTodos(currentFile)
+					todos = append(todos, models.Todo{Text: text, Done: false})
+					_ = storage.SaveTodos(currentFile, todos)
+					refreshTodoList()
+				}
+			})
+
+		case 'D': // Delete selected todo
 			index := todoListView.GetCurrentItem()
 			todos, err := storage.LoadTodos(currentFile)
 			if err != nil {
@@ -214,7 +287,28 @@ func registerKeybindings(dir string) {
 				})
 			}
 			
+		case 'B': // Go back to file list
+			app.SetFocus(fileListView)
+			
+		case 'E': // Edit todo text
+			index := todoListView.GetCurrentItem()
+			todos, err := storage.LoadTodos(currentFile)
+			if err != nil {
+				return event
+			}
+			if index >= 0 && index < len(todos) {
+				showInputDialog("Edit Todo", "New text:", todos[index].Text, func(newText string) {
+					if newText != "" {
+						todos[index].Text = newText
+						_ = storage.SaveTodos(currentFile, todos)
+						refreshTodoList()
+					}
+				})
+			}
 		case 'q': // Quit application
+			app.Stop()
+
+		case 'Q':
 			app.Stop()
 		}
 		return event
