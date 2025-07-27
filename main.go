@@ -25,8 +25,8 @@ func loadConfig() types.Config {
 	defaultConfig := types.Config{
 		UndoneColor:         "yellow",
 		DoneColor:           "green",
-		ActiveWindowColor:   "magenta",
-		UnactiveWindowColor: "gray",
+		ActiveWindowColor:   "purple",
+		UnactiveWindowColor: "aqua",
 		Keymap:              defaultKeymap,
 	}
 
