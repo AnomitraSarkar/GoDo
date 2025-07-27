@@ -1,10 +1,32 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"todo-cli/types"
 	"todo-cli/ui"
 )
+
+func loadConfig() types.Config {
+	defaultConfig := types.Config{
+		UndoneColor:       "yellow",
+		DoneColor:         "green",
+		ActiveWindowColor: "magenta",
+	}
+
+	data, err := os.ReadFile("config.json")
+	if err != nil {
+		return defaultConfig
+	}
+
+	var config types.Config
+	if err := json.Unmarshal(data, &config); err != nil {
+		return defaultConfig
+	}
+
+	return config
+}
 
 func main() {
 	dir := "todos"
@@ -13,5 +35,7 @@ func main() {
 			panic(err)
 		}
 	}
-	ui.StartApp(filepath.Join(".", dir))
+
+	config := loadConfig()
+	ui.StartApp(filepath.Join(".", dir), config)
 }

@@ -2,8 +2,9 @@ package ui
 
 import (
 	"path/filepath"
-
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"todo-cli/types"
 )
 
 var app *tview.Application
@@ -11,8 +12,11 @@ var todoListView *tview.List
 var fileListView *tview.List
 var pages *tview.Pages
 var currentFile string
+var config types.Config
+var activeList *tview.List
 
-func StartApp(dir string) {
+func StartApp(dir string, cfg types.Config) {
+	config = cfg
 	app = tview.NewApplication()
 	pages = tview.NewPages()
 
@@ -27,7 +31,7 @@ func StartApp(dir string) {
 	fileListView.SetSelectedFunc(func(index int, name string, secondary string, shortcut rune) {
 		currentFile = filepath.Join(dir, name)
 		refreshTodoList()
-		app.SetFocus(todoListView)
+		setFocus(todoListView)
 	})
 
 	flex := tview.NewFlex().
@@ -35,11 +39,31 @@ func StartApp(dir string) {
 		AddItem(todoListView, 0, 2, false)
 
 	pages.AddPage("main", flex, true, true)
-	app.SetRoot(pages, true).SetFocus(fileListView)
+	setFocus(fileListView)
+	app.SetRoot(pages, true)
 
 	registerKeybindings(dir)
 
 	if err := app.Run(); err != nil {
 		panic(err)
+	}
+}
+
+func setFocus(primitive tview.Primitive) {
+	if activeList != nil {
+		activeList.SetBorderColor(tview.Styles.BorderColor)
+	}
+
+	app.SetFocus(primitive)
+
+	if primitive == fileListView {
+		activeList = fileListView
+	} else if primitive == todoListView {
+		activeList = todoListView
+	}
+
+	if activeList != nil {
+		color := tcell.GetColor(config.ActiveWindowColor)
+		activeList.SetBorderColor(color)
 	}
 }
