@@ -1,5 +1,9 @@
 [
   {
+    "text": "curses text repr for GoDo",
+    "done": false
+  },
+  {
     "text": "in cli option updation for both",
     "done": false
   },
