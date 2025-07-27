@@ -9,10 +9,25 @@ import (
 )
 
 func loadConfig() types.Config {
+	defaultKeymap := types.Keymap{
+		NewFile:  "n",
+		EditFile: "e",
+		DelFile:  "d",
+		OpenFile: "o",
+		AddTodo:  "a",
+		EditTodo: "e",
+		DelTodo:  "d",
+		Toggle:   "t",
+		Back:     "b",
+		Quit:     "q",
+	}
+
 	defaultConfig := types.Config{
-		UndoneColor:       "yellow",
-		DoneColor:         "green",
-		ActiveWindowColor: "magenta",
+		UndoneColor:         "yellow",
+		DoneColor:           "green",
+		ActiveWindowColor:   "magenta",
+		UnactiveWindowColor: "gray",
+		Keymap:              defaultKeymap,
 	}
 
 	data, err := os.ReadFile("config.json")

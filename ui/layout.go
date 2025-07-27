@@ -13,7 +13,6 @@ var fileListView *tview.List
 var pages *tview.Pages
 var currentFile string
 var config types.Config
-var activeList *tview.List
 
 func StartApp(dir string, cfg types.Config) {
 	config = cfg
@@ -21,10 +20,10 @@ func StartApp(dir string, cfg types.Config) {
 	pages = tview.NewPages()
 
 	fileListView = tview.NewList()
-	fileListView.SetTitle(" Todo Files (n:new e:edit d:del o:open q:quit) ").SetBorder(true)
+	updateFileListTitle()
 
 	todoListView = tview.NewList()
-	todoListView.SetTitle(" Todos (a:add e:edit d:del t:toggle b:back q:quit) ").SetBorder(true)
+	updateTodoListTitle()
 
 	refreshFileList(dir)
 
@@ -49,21 +48,40 @@ func StartApp(dir string, cfg types.Config) {
 	}
 }
 
+func updateFileListTitle() {
+	key := config.Keymap
+	title := " Todo Files "
+	title += "(" + key.NewFile + ":new "
+	title += key.EditFile + ":edit "
+	title += key.DelFile + ":del "
+	title += key.OpenFile + ":open "
+	title += key.Quit + ":quit) "
+	fileListView.SetTitle(title).SetBorder(true)
+}
+
+func updateTodoListTitle() {
+	key := config.Keymap
+	title := " Todos "
+	title += "(" + key.AddTodo + ":add "
+	title += key.EditTodo + ":edit "
+	title += key.DelTodo + ":del "
+	title += key.Toggle + ":toggle "
+	title += key.Back + ":back "
+	title += key.Quit + ":quit) "
+	todoListView.SetTitle(title).SetBorder(true)
+}
+
 func setFocus(primitive tview.Primitive) {
-	if activeList != nil {
-		activeList.SetBorderColor(tview.Styles.BorderColor)
+	activeColor := tcell.GetColor(config.ActiveWindowColor)
+	unactiveColor := tcell.GetColor(config.UnactiveWindowColor)
+
+	if primitive == fileListView {
+		fileListView.SetBorderColor(activeColor)
+		todoListView.SetBorderColor(unactiveColor)
+	} else if primitive == todoListView {
+		todoListView.SetBorderColor(activeColor)
+		fileListView.SetBorderColor(unactiveColor)
 	}
 
 	app.SetFocus(primitive)
-
-	if primitive == fileListView {
-		activeList = fileListView
-	} else if primitive == todoListView {
-		activeList = todoListView
-	}
-
-	if activeList != nil {
-		color := tcell.GetColor(config.ActiveWindowColor)
-		activeList.SetBorderColor(color)
-	}
 }

@@ -1,136 +1,138 @@
-# 📝 Godo
+# GoDo
 
-> ⚡ A fast, lightweight, file-based CLI todo manager built with Go. No sync, no cloud — just simple todos that live locally and are versionable with Git.
+A terminal-based todo list manager with customizable colors and keybindings, written in Go.
 
-![Go Version](https://img.shields.io/badge/Go-1.20+-brightgreen)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![Todo CLI Screenshot](screenshot.png) _(Note: Add actual screenshot later)_
 
----
+## Features
 
-## ✨ Features
+- 📝 Manage multiple todo lists in separate files
+- ✅ Color-coded todo items (configurable)
+- 🎨 Customizable UI colors
+- ⌨️ Fully configurable keybindings
+- 🖥️ Intuitive terminal interface
+- 💾 Automatic saving of todos
+- 🔄 Real-time refresh of lists
 
-- ⚡ **Fast and Lightweight**: Zero dependencies. Blazing fast in terminal.
-- 💾 **File-based**: Your todos are stored as simple local files (`.godo`)
-- 🛠️ **Git-friendly**: Use Git to track changes to your todos.
-- 📂 **Multiple lists**: Manage multiple todo files (projects or categories).
-- 📦 **Cross-platform**: Works on Windows, Linux, and macOS.
+## Installation
 
----
+### Prerequisites
 
-## 📦 Installation
+- Go 1.16+ installed
+- Terminal with 256-color support recommended
 
-### Using `go install`
-
-```bash
-go install github.com/yourusername/godo@latest
-````
-
-Make sure your `$GOPATH/bin` is added to your `$PATH`.
-
----
-
-## 🚀 Getting Started
+### Build from Source
 
 ```bash
-godo help         # Show usage
-godo new work     # Create a new todo file named 'work'
-godo add work     # Add a new todo to 'work'
-godo list work    # List all todos in 'work'
-godo done work    # Mark a todo as completed
-godo edit work    # Edit a todo entry
-godo del work     # Delete a todo
+git clone https://github.com/yourusername/todo-cli.git
+cd todo-cli
+go build -o todo
 ```
 
----
-
-## 🛠️ Commands Manual
-
-| Command            | Description                               |
-| ------------------ | ----------------------------------------- |
-| `godo help`        | Show help info                            |
-| `godo new <file>`  | Create a new todo file                    |
-| `godo add <file>`  | Add a new todo item                       |
-| `godo list <file>` | List all todo items                       |
-| `godo done <file>` | Mark a todo as completed                  |
-| `godo del <file>`  | Delete a todo item                        |
-| `godo edit <file>` | Edit a todo entry                         |
-| `godo files`       | Show all todo files                       |
-| `godo open <file>` | Open a todo file in editor (if supported) |
-
-Each todo file is stored as a plain `.godo` file under the `~/.godo/` directory (or the working directory depending on config).
-
----
-
-## 📂 Example
+### Running
 
 ```bash
-$ godo new personal
-Created todo file: personal.godo
-
-$ godo add personal
-> What do you want to add?
-Buy groceries
-
-$ godo list personal
-1. [ ] Buy groceries
-
-$ godo done personal
-> Which todo ID to mark done?
-1
-
-$ godo list personal
-1. [x] Buy groceries
+./todo
 ```
 
----
+## Configuration
 
-## 🧩 Directory Structure
+The application reads from `config.json` in the same directory. A default configuration will be created if none exists.
 
-By default, your todo files are saved in:
+### Example config.json
 
-```bash
-~/.godo/
+```json
+{
+  "undoneColor": "yellow",
+  "doneColor": "green",
+  "activeWindowColor": "magenta",
+  "unactiveWindowColor": "gray",
+  "keymap": {
+    "newFile": "n",
+    "editFile": "e",
+    "delFile": "d",
+    "openFile": "o",
+    "addTodo": "a",
+    "editTodo": "e",
+    "delTodo": "d",
+    "toggle": "t",
+    "back": "b",
+    "quit": "q"
+  }
+}
 ```
 
-Each file is stored as:
+### Color Options
 
-```text
-<filename>.godo
+Use any standard color name or hex value:
+
+- Named colors: `red`, `blue`, `green`, etc.
+- Hex values: `#ff0000`, `#00ff00`, etc.
+- XTerm colors: `darkred`, `lightblue`, etc.
+
+## Usage
+
+### File Management (Left Panel)
+
+| Action         | Default Key | Description              |
+| -------------- | ----------- | ------------------------ |
+| New File       | n           | Create a new todo file   |
+| Edit File Name | e           | Rename current todo file |
+| Delete File    | d           | Remove current todo file |
+| Open File      | o           | Open selected todo file  |
+| Quit           | q           | Exit the application     |
+
+### Todo Management (Right Panel)
+
+| Action        | Default Key | Description           |
+| ------------- | ----------- | --------------------- |
+| Add Todo      | a           | Add new todo item     |
+| Edit Todo     | e           | Modify todo text      |
+| Delete Todo   | d           | Remove todo item      |
+| Toggle Status | t           | Mark todo done/undone |
+| Back to Files | b           | Return to file list   |
+| Quit          | q           | Exit the application  |
+
+## File Storage
+
+Todo files are stored in the `todos/` directory with `.todo` extension. Each file contains JSON-formatted todo items.
+
+### Example todo file
+
+```json
+[
+  { "text": "Buy groceries", "done": false },
+  { "text": "Finish project", "done": true }
+]
 ```
 
----
+## Customizing Keybindings
 
-## 🧠 Why Godo?
+Edit the `keymap` section in `config.json`. You can use:
 
-* No cloud lock-in
-* No internet dependency
-* Great for developers
-* Can be version-controlled
-* Minimalist and efficient
+- Single characters: `"a"`, `"b"`, etc.
+- Special characters: `"@"`, `"!"`, etc.
+- Case doesn't matter (treated as lowercase)
 
----
+## Troubleshooting
 
-## 🤝 Contributing
+### Common Issues
 
-1. Fork the repo
-2. Create your feature branch: `git checkout -b feat/new-command`
-3. Commit your changes: `git commit -m "Add new feature"`
-4. Push to the branch: `git push origin feat/new-command`
-5. Open a Pull Request
+- **Colors not working**: Ensure your terminal supports 256 colors
+- **Files not saving**: Check write permissions in the todos directory
+- **Keybindings not working**: Verify config.json is valid JSON
 
----
+## Contributing
 
-## 📄 License
+Contributions are welcome! Please open an issue or pull request for any:
 
-MIT © \[Your Name]
+- Bug fixes
+- New features
+- Documentation improvements
 
----
+## License
 
-## 🔗 Related Projects
+MIT License - see [LICENSE](LICENSE) for details.
 
-* [taskwarrior](https://taskwarrior.org/)
-* [todo.txt](https://github.com/todotxt/todo.txt-cli)
-* [yazi](https://github.com/sxyazi/yazi) – for file managers (naming inspo)
+Created BY: ***ANOMITRA SARKAR***
 
----

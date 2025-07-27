@@ -41,7 +41,6 @@ func refreshTodoList() {
 			color = config.DoneColor
 		}
 		
-		// Apply color to todo item
 		text := fmt.Sprintf("[%s]%s %s", color, prefix, t.Text)
 		todoListView.AddItem(text, "", 0, nil)
 	}
@@ -63,15 +62,14 @@ func showInputDialog(title, label, initialText string, callback func(string)) {
 			pages.RemovePage("dialog")
 		})
 
-	// Set up keyboard navigation
 	inputField.SetDoneFunc(func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
-			app.SetFocus(form.GetButton(0)) // Focus OK button
+			app.SetFocus(form.GetButton(0))
 		case tcell.KeyEsc:
 			pages.RemovePage("dialog")
 		case tcell.KeyTab:
-			app.SetFocus(form.GetButton(0)) // Focus OK button
+			app.SetFocus(form.GetButton(0))
 		}
 	})
 
@@ -81,7 +79,6 @@ func showInputDialog(title, label, initialText string, callback func(string)) {
 			pages.RemovePage("dialog")
 			return nil
 		case tcell.KeyTab:
-			// Cycle through buttons
 			currentFocus := app.GetFocus()
 			if currentFocus == form.GetButton(0) {
 				app.SetFocus(form.GetButton(1))
@@ -107,9 +104,11 @@ func showInputDialog(title, label, initialText string, callback func(string)) {
 }
 
 func registerKeybindings(dir string) {
+	key := config.Keymap
+
 	fileListView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
-		case 'n', 'N': // Create new file
+		case rune(key.NewFile[0]): // Create new file
 			showInputDialog("New File", "File name (without .todo):", "", func(name string) {
 				if name != "" {
 					name = strings.TrimSuffix(name, ".todo")
@@ -119,7 +118,7 @@ func registerKeybindings(dir string) {
 				}
 			})
 
-		case 'd', 'D': // Delete selected file
+		case rune(key.DelFile[0]): // Delete selected file
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				name, _ := fileListView.GetItemText(index)
@@ -131,16 +130,16 @@ func registerKeybindings(dir string) {
 				refreshFileList(dir)
 			}
 
-		case 'o', 'O': // Open selected file
+		case rune(key.OpenFile[0]): // Open selected file
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				name, _ := fileListView.GetItemText(index)
 				currentFile = filepath.Join(dir, name)
 				refreshTodoList()
-				setFocus(todoListView) // Updated to setFocus
+				setFocus(todoListView)
 			}
 
-		case 'e', 'E': // Edit file name
+		case rune(key.EditFile[0]): // Edit file name
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				oldName, _ := fileListView.GetItemText(index)
@@ -159,7 +158,7 @@ func registerKeybindings(dir string) {
 				})
 			}
 			
-		case 'q', 'Q': // Quit application
+		case rune(key.Quit[0]): // Quit application
 			app.Stop()
 		}
 		return event
@@ -167,7 +166,7 @@ func registerKeybindings(dir string) {
 
 	todoListView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
-		case 'a', 'A': // Add new todo
+		case rune(key.AddTodo[0]): // Add new todo
 			showInputDialog("New Todo", "Enter todo text:", "", func(text string) {
 				if text != "" {
 					todos, _ := storage.LoadTodos(currentFile)
@@ -177,7 +176,7 @@ func registerKeybindings(dir string) {
 				}
 			})
 
-		case 'd', 'D': // Delete selected todo
+		case rune(key.DelTodo[0]): // Delete selected todo
 			index := todoListView.GetCurrentItem()
 			todos, err := storage.LoadTodos(currentFile)
 			if err != nil {
@@ -189,7 +188,7 @@ func registerKeybindings(dir string) {
 			}
 			refreshTodoList()
 
-		case 't': // Toggle done
+		case rune(key.Toggle[0]): // Toggle done
 			index := todoListView.GetCurrentItem()
 			todos, err := storage.LoadTodos(currentFile)
 			if err != nil {
@@ -201,10 +200,10 @@ func registerKeybindings(dir string) {
 			}
 			refreshTodoList()
 			
-		case 'b', 'B': // Go back to file list
-			setFocus(fileListView) // Updated to setFocus
+		case rune(key.Back[0]): // Go back to file list
+			setFocus(fileListView)
 			
-		case 'e', 'E': // Edit todo text
+		case rune(key.EditTodo[0]): // Edit todo text
 			index := todoListView.GetCurrentItem()
 			todos, err := storage.LoadTodos(currentFile)
 			if err != nil {
@@ -220,7 +219,7 @@ func registerKeybindings(dir string) {
 				})
 			}
 			
-		case 'q', 'Q': // Quit application
+		case rune(key.Quit[0]): // Quit application
 			app.Stop()
 		}
 		return event

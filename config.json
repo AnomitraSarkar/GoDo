@@ -1,5 +1,18 @@
 {
 	"undoneColor": "yellow",
 	"doneColor": "green",
-	"activeWindowColor": "blue"
+	"activeWindowColor": "purple",
+	"unactiveWindowColor": "aqua",
+	"keymap": {
+		"newFile": "n",
+		"editFile": "e",
+		"delFile": "d",
+		"openFile": "o",
+		"addTodo": "a",
+		"editTodo": "e",
+		"delTodo": "d",
+		"toggle": "t",
+		"back": "b",
+		"quit": "q"
+	}
 }
