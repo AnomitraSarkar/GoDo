@@ -8,6 +8,7 @@ import (
 	"todo-cli/ui"
 )
 
+// config modality my default btw
 func loadConfig() types.Config {
 	defaultKeymap := types.Keymap{
 		NewFile:  "n",
@@ -43,6 +44,8 @@ func loadConfig() types.Config {
 	return config
 }
 
+
+// main function entry point
 func main() {
 	dir := "todos"
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
