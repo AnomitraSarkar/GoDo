@@ -57,7 +57,7 @@
   },
   {
     "text": "manual",
-    "done": false
+    "done": true
   },
   {
     "text": "remove done options both local level and global level",
@@ -70,5 +70,9 @@
   {
     "text": "edit option form ",
     "done": true
+  },
+  {
+    "text": "installers",
+    "done": false
   }
 ]
