@@ -2,6 +2,7 @@ package ui
 
 import (
 	"path/filepath"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -45,23 +46,85 @@ func splashScreen(dir string) *tview.Flex {
 		AddItem(message, 1, 1, false).
 		AddItem(nil, 0, 1, false)
 
-	// Only react to Enter key
 	flex.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEnter {
 			initializeMainUI(dir)
-			pages.RemovePage("splash") // Clean up splash page
-			return nil                 // Consume the Enter key
+			pages.RemovePage("splash")
+			return nil
 		}
-		return nil // Ignore all other keys
+		return nil
 	})
 
 	return flex
+}
+
+func showErrorDialog(msg string) {
+	modal := tview.NewModal().
+		SetText(msg).
+		AddButtons([]string{"OK"}).
+		SetDoneFunc(func(_ int, _ string) {
+			pages.RemovePage("errorDialog")
+		})
+	pages.AddPage("errorDialog", modal, true, true)
+}
+
+func showInfoDialogAndExit(msg string) {
+	modal := tview.NewModal().
+		SetText(msg).
+		AddButtons([]string{"OK"}).
+		SetDoneFunc(func(_ int, _ string) {
+			app.Stop()
+		})
+	pages.AddPage("infoDialog", modal, true, true)
+}
+
+func showUpdateDialog() {
+	modal := tview.NewModal().
+		SetText("An update is available. Do you want to update now?").
+		AddButtons([]string{"Yes", "Later"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			pages.RemovePage("updateDialog")
+			if buttonLabel == "Yes" {
+				updatingModal := tview.NewModal().
+					SetText("Updating... Please wait.")
+				pages.AddPage("updating", updatingModal, true, true)
+
+				go func() {
+					err := updateApplication()
+					app.QueueUpdateDraw(func() {
+						pages.RemovePage("updating")
+						if err != nil {
+							showErrorDialog("Update failed: " + err.Error())
+						} else {
+							showInfoDialogAndExit("✓ Update successful. Restart the application.")
+						}
+					})
+				}()
+			}
+		})
+	pages.AddPage("updateDialog", modal, true, true)
 }
 
 func StartApp(dir string, cfg types.Config) {
 	config = cfg
 	app = tview.NewApplication()
 	pages = tview.NewPages()
+
+	// Check for updates in background
+	go func() {
+		// Wait for UI to initialize
+		time.Sleep(500 * time.Millisecond)
+		
+		updateAvailable, err := checkForUpdate()
+		if err != nil {
+			return // Silently ignore errors
+		}
+		if updateAvailable {
+			app.QueueUpdateDraw(func() {
+				showUpdateDialog()
+			})
+		}
+	}()
 
 	// Show splash
 	pages.AddPage("splash", splashScreen(dir), true, true)
