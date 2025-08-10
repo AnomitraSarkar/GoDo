@@ -130,9 +130,11 @@ Contributions are welcome! Please open an issue or pull request for any:
 - New features
 - Documentation improvements
 
+> **_Note_**
+> A list of improvements/features are provided in the Todos of the github repo itself, which might be seen on startup godo in the source directory itself.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
-Created BY: ***ANOMITRA SARKAR***
-
+Created BY: **_ANOMITRA SARKAR_**
