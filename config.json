@@ -4,7 +4,7 @@
 	"activeWindowColor": "purple",
 	"unactiveWindowColor": "aqua",
 	"priorityColor": "black",
-	"relativeTime" : true,
+	"relativeTime": true,
 	"keymap": {
 		"newFile": "n",
 		"editFile": "e",

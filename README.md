@@ -45,8 +45,10 @@ The application reads from `config.json` in the same directory. A default config
 {
   "undoneColor": "yellow",
   "doneColor": "green",
-  "activeWindowColor": "magenta",
-  "unactiveWindowColor": "gray",
+  "activeWindowColor": "purple",
+  "unactiveWindowColor": "aqua",
+  "priorityColor": "black",
+  "relativeTime": true,
   "keymap": {
     "newFile": "n",
     "editFile": "e",
@@ -57,7 +59,10 @@ The application reads from `config.json` in the same directory. A default config
     "delTodo": "d",
     "toggle": "t",
     "back": "b",
-    "quit": "q"
+    "quit": "q",
+    "moveToTop": "g",
+    "moveToBottom": "G",
+    "setPriority": "p"
   }
 }
 ```
