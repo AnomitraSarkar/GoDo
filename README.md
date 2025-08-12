@@ -23,11 +23,14 @@ A terminal-based todo list manager with customizable colors and keybindings, wri
 
 ### Build from Source
 
+
 ```bash
-git clone https://github.com/yourusername/todo-cli.git
-cd todo-cli
-go build -o todo
+git clone https://github.com/AnomitraSarkar/GoDo
+cd GoDo
+go build -o godo.exe main.go 
 ```
+
+> ***Note*** :The build depends on your machine platform
 
 ### Running
 
