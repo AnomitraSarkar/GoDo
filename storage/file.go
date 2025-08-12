@@ -4,28 +4,67 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"time"
 	"todo-cli/models"
 )
 
-func SaveTodos(path string, todos []models.Todo) error {
-	data, err := json.MarshalIndent(todos, "", "  ")
+type TodoFileData struct {
+	CreatedAt time.Time     `json:"createdAt"`
+	Todos     []models.Todo `json:"todos"`
+	Priority  bool          `json:"priority"`
+}
+
+func SaveTodos(path string, fileData TodoFileData) error {
+	data, err := json.MarshalIndent(fileData, "", "  ")
 	if err != nil {
 		return err
 	}
 	return os.WriteFile(path, data, 0644)
 }
 
-func LoadTodos(path string) ([]models.Todo, error) {
-	var todos []models.Todo
+func LoadTodos(path string) (TodoFileData, error) {
+	var fileData TodoFileData
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return todos, err
+		return fileData, err
 	}
-	if len(data) == 0 {
-		return todos, nil
+
+	// First, try to unmarshal into the new format
+	err = json.Unmarshal(data, &fileData)
+	if err == nil {
+		// Set default creation time if missing
+		if fileData.CreatedAt.IsZero() {
+			fileInfo, _ := os.Stat(path)
+			fileData.CreatedAt = fileInfo.ModTime()
+		}
+		return fileData, nil
 	}
-	err = json.Unmarshal(data, &todos)
-	return todos, err
+
+	// If that fails, try the old format
+	var oldTodos []models.Todo
+	if err := json.Unmarshal(data, &oldTodos); err != nil {
+		return fileData, err
+	}
+
+	// Get file mod time as creation time
+	fileInfo, err := os.Stat(path)
+	modTime := time.Now()
+	if err == nil {
+		modTime = fileInfo.ModTime()
+	}
+
+	// Set creation times for old todos
+	for i := range oldTodos {
+		if oldTodos[i].CreatedAt.IsZero() {
+			oldTodos[i].CreatedAt = modTime
+		}
+	}
+
+	return TodoFileData{
+		CreatedAt: modTime,
+		Todos:     oldTodos,
+		Priority:  false,
+	}, nil
 }
 
 func ListTodoFiles(dir string) ([]string, error) {

@@ -161,6 +161,7 @@ func initializeMainUI(dir string) {
 	registerKeybindings(dir)
 }
 
+
 func updateFileListTitle() {
 	key := config.Keymap
 	title := " Todo Files "
@@ -168,6 +169,7 @@ func updateFileListTitle() {
 	title += key.EditFile + ":edit "
 	title += key.DelFile + ":del "
 	title += key.OpenFile + ":open "
+	title += key.SetPriority + ":priority " // New
 	title += key.Quit + ":quit) "
 	fileListView.SetTitle(title).SetBorder(true)
 }
@@ -179,6 +181,7 @@ func updateTodoListTitle() {
 	title += key.EditTodo + ":edit "
 	title += key.DelTodo + ":del "
 	title += key.Toggle + ":toggle "
+	title += key.SetPriority + ":priority " // New
 	title += key.Back + ":back "
 	title += key.Quit + ":quit) "
 	todoListView.SetTitle(title).SetBorder(true)

@@ -1,86 +1,150 @@
-[
-  {
-    "text": "curses text repr for GoDo",
-    "done": true
-  },
-  {
-    "text": "in cli option updation for both",
-    "done": false
-  },
-  {
-    "text": "config files generator",
-    "done": false
-  },
-  {
-    "text": "nerd font compatiblity",
-    "done": false
-  },
-  {
-    "text": "locally-encrypted",
-    "done": false
-  },
-  {
-    "text": "password protection",
-    "done": false
-  },
-  {
-    "text": "multi check system not only tick and wrong",
-    "done": false
-  },
-  {
-    "text": "priority movement",
-    "done": false
-  },
-  {
-    "text": "possible null empty string bugs",
-    "done": false
-  },
-  {
-    "text": "vim motions",
-    "done": false
-  },
-  {
-    "text": "multi system compilation and releases",
-    "done": false
-  },
-  {
-    "text": "open-source the project",
-    "done": false
-  },
-  {
-    "text": "profiling",
-    "done": false
-  },
-  {
-    "text": "global + local mode",
-    "done": false
-  },
-  {
-    "text": "manual",
-    "done": true
-  },
-  {
-    "text": "remove done options both local level and global level",
-    "done": false
-  },
-  {
-    "text": "quit option",
-    "done": true
-  },
-  {
-    "text": "edit option form ",
-    "done": true
-  },
-  {
-    "text": "installers",
-    "done": false
-  },
-  {
-    "text": "auto installers",
-    "done": true
-  },
-  {
-    "text": "optimize code for further delay by using go routines and channels for fetching concurrent tasks and git checks",
-    "done": false
-  }
-]
+{
+  "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+  "todos": [
+    {
+      "text": "curses text repr for GoDo",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": true
+    },
+    {
+      "text": "in cli option updation for both",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "config files generator",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "nerd font compatiblity",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "locally-encrypted",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "password protection",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "multi check system not only tick and wrong",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "priority movement",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "possible null empty string bugs",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "vim motions",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "multi system compilation and releases",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "open-source the project",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "profiling",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "global + local mode",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "manual",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "remove done options both local level and global level",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "quit option",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "edit option form ",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "installers",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "auto pullers",
+      "done": true,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "optimize code for further delay by using go routines and channels for fetching concurrent tasks and git checks",
+      "done": false,
+      "createdAt": "2025-08-12T10:57:35.8406514+05:30",
+      "priority": false
+    },
+    {
+      "text": "todos movements",
+      "done": false,
+      "createdAt": "2025-08-12T11:56:48.2086331+05:30",
+      "priority": false
+    },
+    {
+      "text": "sorting base outs",
+      "done": false,
+      "createdAt": "2025-08-12T11:57:28.6746586+05:30",
+      "priority": false
+    },
+    {
+      "text": "better formats tabulation of todo and time",
+      "done": false,
+      "createdAt": "2025-08-12T11:57:56.9532044+05:30",
+      "priority": false
+    }
+  ],
+  "priority": false
+}
