@@ -1,7 +1,7 @@
 [
   {
     "text": "curses text repr for GoDo",
-    "done": false
+    "done": true
   },
   {
     "text": "in cli option updation for both",
@@ -73,6 +73,14 @@
   },
   {
     "text": "installers",
+    "done": false
+  },
+  {
+    "text": "auto installers",
+    "done": true
+  },
+  {
+    "text": "optimize code for further delay by using go routines and channels for fetching concurrent tasks and git checks",
     "done": false
   }
 ]
