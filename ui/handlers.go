@@ -5,11 +5,23 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 	"todo-cli/models"
 	"todo-cli/storage"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
+
+func firstRune(s string) rune {
+	if s == "" {
+		return 0
+	}
+	for _, r := range s {
+		return r
+	}
+	return 0
+}
 
 func refreshFileList(dir string) {
 	fileListView.Clear()
@@ -18,7 +30,18 @@ func refreshFileList(dir string) {
 		return
 	}
 	for _, file := range todoFiles {
-		fileListView.AddItem(file, "", 0, nil)
+		path := filepath.Join(dir, file)
+		fileData, err := storage.LoadTodos(path)
+		if err != nil {
+			continue
+		}
+		
+		text := file
+		if fileData.Priority {
+			text = fmt.Sprintf("[%s]★ %s[-]", config.PriorityColor, file)
+		}
+		timeStr := formatTime(fileData.CreatedAt, config.RelativeTime)
+		fileListView.AddItem(text, timeStr, 0, nil)
 	}
 }
 
@@ -27,19 +50,23 @@ func refreshTodoList() {
 	if currentFile == "" {
 		return
 	}
-	todos, err := storage.LoadTodos(currentFile)
+	fileData, err := storage.LoadTodos(currentFile)
 	if err != nil {
 		return
 	}
-	for _, t := range todos {
+	for _, t := range fileData.Todos {
 		prefix := "❌"
 		color := config.UndoneColor
 		if t.Done {
 			prefix = "✅"
 			color = config.DoneColor
 		}
+		if t.Priority {
+			color = config.PriorityColor
+		}
 		
-		text := fmt.Sprintf("[%s]%s %s", color, prefix, t.Text)
+		timeStr := formatTime(t.CreatedAt, config.RelativeTime)
+		text := fmt.Sprintf("[%s]%s %s[-] (%s)", color, prefix, t.Text, timeStr)
 		todoListView.AddItem(text, "", 0, nil)
 	}
 }
@@ -106,17 +133,22 @@ func registerKeybindings(dir string) {
 
 	fileListView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
-		case rune(key.NewFile[0]): // Create new file
+		case firstRune(key.NewFile): // Create new file
 			showInputDialog("New File", "File name (without .todo):", "", func(name string) {
 				if name != "" {
 					name = strings.TrimSuffix(name, ".todo")
 					path := filepath.Join(dir, name+".todo")
-					_ = storage.SaveTodos(path, []models.Todo{})
+					fileData := storage.TodoFileData{
+						CreatedAt: time.Now(),
+						Todos:     []models.Todo{},
+						Priority:  false,
+					}
+					_ = storage.SaveTodos(path, fileData)
 					refreshFileList(dir)
 				}
 			})
 
-		case rune(key.DelFile[0]): // Delete selected file
+		case firstRune(key.DelFile): // Delete selected file
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				name, _ := fileListView.GetItemText(index)
@@ -128,7 +160,7 @@ func registerKeybindings(dir string) {
 				refreshFileList(dir)
 			}
 
-		case rune(key.OpenFile[0]): // Open selected file
+		case firstRune(key.OpenFile): // Open selected file
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				name, _ := fileListView.GetItemText(index)
@@ -137,7 +169,7 @@ func registerKeybindings(dir string) {
 				setFocus(todoListView)
 			}
 
-		case rune(key.EditFile[0]): // Edit file name
+		case firstRune(key.EditFile): // Edit file name
 			index := fileListView.GetCurrentItem()
 			if index >= 0 && index < fileListView.GetItemCount() {
 				oldName, _ := fileListView.GetItemText(index)
@@ -156,69 +188,110 @@ func registerKeybindings(dir string) {
 				})
 			}
 			
-		case rune(key.Quit[0]): // Quit application
+		case firstRune(key.Quit): // Quit application
 			app.Stop()
+
+		case firstRune(key.SetPriority): // Toggle file priority
+			index := fileListView.GetCurrentItem()
+			if index >= 0 && index < fileListView.GetItemCount() {
+				name, _ := fileListView.GetItemText(index)
+				path := filepath.Join(dir, name)
+				fileData, err := storage.LoadTodos(path)
+				if err != nil {
+					return event
+				}
+				fileData.Priority = !fileData.Priority
+				_ = storage.SaveTodos(path, fileData)
+				refreshFileList(dir)
+			}
+			
+		case firstRune(key.MoveToTop): // gg - move to top
+			fileListView.SetCurrentItem(0)
+		case firstRune(key.MoveToBottom): // G - move to bottom
+			fileListView.SetCurrentItem(fileListView.GetItemCount() - 1)
 		}
 		return event
 	})
 
 	todoListView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
-		case rune(key.AddTodo[0]): // Add new todo
+		case firstRune(key.AddTodo): // Add new todo
 			showInputDialog("New Todo", "Enter todo text:", "", func(text string) {
 				if text != "" {
-					todos, _ := storage.LoadTodos(currentFile)
-					todos = append(todos, models.Todo{Text: text, Done: false})
-					_ = storage.SaveTodos(currentFile, todos)
+					fileData, _ := storage.LoadTodos(currentFile)
+					fileData.Todos = append(fileData.Todos, models.Todo{
+						Text:      text,
+						Done:      false,
+						CreatedAt: time.Now(),
+						Priority:  false,
+					})
+					_ = storage.SaveTodos(currentFile, fileData)
 					refreshTodoList()
 				}
 			})
 
-		case rune(key.DelTodo[0]): // Delete selected todo
+		case firstRune(key.DelTodo): // Delete selected todo
 			index := todoListView.GetCurrentItem()
-			todos, err := storage.LoadTodos(currentFile)
+			fileData, err := storage.LoadTodos(currentFile)
 			if err != nil {
 				return event
 			}
-			if index >= 0 && index < len(todos) {
-				todos = append(todos[:index], todos[index+1:]...)
-				_ = storage.SaveTodos(currentFile, todos)
+			if index >= 0 && index < len(fileData.Todos) {
+				fileData.Todos = append(fileData.Todos[:index], fileData.Todos[index+1:]...)
+				_ = storage.SaveTodos(currentFile, fileData)
 			}
 			refreshTodoList()
 
-		case rune(key.Toggle[0]): // Toggle done
+		case firstRune(key.Toggle): // Toggle done
 			index := todoListView.GetCurrentItem()
-			todos, err := storage.LoadTodos(currentFile)
+			fileData, err := storage.LoadTodos(currentFile)
 			if err != nil {
 				return event
 			}
-			if index >= 0 && index < len(todos) {
-				todos[index].Done = !todos[index].Done
-				_ = storage.SaveTodos(currentFile, todos)
+			if index >= 0 && index < len(fileData.Todos) {
+				fileData.Todos[index].Done = !fileData.Todos[index].Done
+				_ = storage.SaveTodos(currentFile, fileData)
 			}
 			refreshTodoList()
 			
-		case rune(key.Back[0]): // Go back to file list
+		case firstRune(key.Back): // Go back to file list
 			setFocus(fileListView)
 			
-		case rune(key.EditTodo[0]): // Edit todo text
+		case firstRune(key.EditTodo): // Edit todo text
 			index := todoListView.GetCurrentItem()
-			todos, err := storage.LoadTodos(currentFile)
+			fileData, err := storage.LoadTodos(currentFile)
 			if err != nil {
 				return event
 			}
-			if index >= 0 && index < len(todos) {
-				showInputDialog("Edit Todo", "New text:", todos[index].Text, func(newText string) {
+			if index >= 0 && index < len(fileData.Todos) {
+				showInputDialog("Edit Todo", "New text:", fileData.Todos[index].Text, func(newText string) {
 					if newText != "" {
-						todos[index].Text = newText
-						_ = storage.SaveTodos(currentFile, todos)
+						fileData.Todos[index].Text = newText
+						_ = storage.SaveTodos(currentFile, fileData)
 						refreshTodoList()
 					}
 				})
 			}
 			
-		case rune(key.Quit[0]): // Quit application
+		case firstRune(key.Quit): // Quit application
 			app.Stop()
+
+		case firstRune(key.SetPriority): // Toggle todo priority
+			index := todoListView.GetCurrentItem()
+			fileData, err := storage.LoadTodos(currentFile)
+			if err != nil {
+				return event
+			}
+			if index >= 0 && index < len(fileData.Todos) {
+				fileData.Todos[index].Priority = !fileData.Todos[index].Priority
+				_ = storage.SaveTodos(currentFile, fileData)
+				refreshTodoList()
+			}
+			
+		case firstRune(key.MoveToTop): // gg - move to top
+			todoListView.SetCurrentItem(0)
+		case firstRune(key.MoveToBottom): // G - move to bottom
+			todoListView.SetCurrentItem(todoListView.GetItemCount() - 1)
 		}
 		return event
 	})

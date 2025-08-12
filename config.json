@@ -3,6 +3,8 @@
 	"doneColor": "green",
 	"activeWindowColor": "purple",
 	"unactiveWindowColor": "aqua",
+	"priorityColor": "black",
+	"relativeTime" : true,
 	"keymap": {
 		"newFile": "n",
 		"editFile": "e",
@@ -13,6 +15,9 @@
 		"delTodo": "d",
 		"toggle": "t",
 		"back": "b",
-		"quit": "q"
+		"quit": "q",
+		"moveToTop": "g",
+		"moveToBottom": "G",
+		"setPriority": "p"
 	}
 }
