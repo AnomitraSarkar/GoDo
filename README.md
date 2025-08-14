@@ -143,3 +143,6 @@ Contributions are welcome! Please open an issue or pull request for any:
 MIT License - see [LICENSE](LICENSE) for details.
 
 Created BY: **_ANOMITRA SARKAR_**
+
+github: https://github.com/AnomitraSarkar
+linkedin: https://linkedin.com/in/AnomitraSarkar
